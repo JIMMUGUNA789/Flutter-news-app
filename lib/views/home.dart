@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:newsapp/helpers/data.dart';
 import 'package:newsapp/helpers/news.dart';
@@ -7,6 +8,8 @@ import 'package:newsapp/models/category_model.dart';
 // Try changing the scroll speed
 import 'dart:math';
 import 'package:flutter/rendering.dart';
+import 'package:newsapp/views/article_view.dart';
+import 'package:newsapp/views/category_view.dart';
 
 
 class AdjustableScrollController extends ScrollController {
@@ -62,24 +65,27 @@ class _HomeState extends State<Home> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget> [
-             Text('News'),
-             Text('App', style: TextStyle(color: Colors.white),),
+             Text('News '),
+             Text('Today', style: TextStyle(color: Colors.white),),
           ],
         ),
         elevation: 0.0,
         centerTitle: true,
       ),
       body:
-      _loading ? Center(
+      _loading ? Center( 
         child: Container(
           child: const CircularProgressIndicator(),
         ),
       ):
        Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        
         child:Column(
           children: <Widget>[ 
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.only(top: 14, bottom: 12),
+              
               height: 70,
               child: ListView.builder(
                 itemCount: categories.length,
@@ -107,7 +113,8 @@ class _HomeState extends State<Home> {
                       itemBuilder: (context, index){
                         return BlogTile(imageUrl: articles[index].urlToImage,
                          title: articles[index].title,
-                          desc:articles[index].description);
+                          desc:articles[index].description,
+                          url:articles[index].url);
                       },
                     ),
                   ],
@@ -132,13 +139,16 @@ class CategoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){},
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context)=>CategoryNews(category: categoryName.toString().toLowerCase())));
+      },
       child: Container(
         margin: const EdgeInsets.only(right: 16),
         child: Stack(
           children: <Widget> [
             ClipRRect(borderRadius: BorderRadius.circular(6),
-            child:Image.network(imageUrl, width: 120, height: 60, fit: BoxFit.cover,),),
+            child:CachedNetworkImage(imageUrl:imageUrl, width: 120, height: 60, fit: BoxFit.cover,),),
             
             Container(
               width: 120,
@@ -163,19 +173,36 @@ class CategoryTile extends StatelessWidget {
 
 //body
 class BlogTile extends StatelessWidget {
-  final imageUrl, title, desc;
-  const BlogTile({Key? key, required this.imageUrl, required this.title, required this.desc}) : super(key: key);
+  final imageUrl, title, desc, url;
+  const BlogTile({Key? key, required this.imageUrl, required this.title, required this.desc, required this.url}) : super(key: key);
  
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Image.network(imageUrl),
-          Text(title),
-          Text(desc),
-        ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context,MaterialPageRoute(
+          builder: (context)=>ArticleView(blogUrl: url)));
+      },
+      child: Container(
+        margin:const EdgeInsets.only(bottom: 16,),
+        child: Column(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.network(imageUrl)),
+             const SizedBox(height: 8,),
+            Text(title, style: const TextStyle(
+            fontSize: 18,
+            color: Colors.black87,
+            fontWeight: FontWeight.w500,
+            ),),
+            const SizedBox(height: 8,),
+            Text(desc, style: const TextStyle(
+              color:Colors.black54,
+            ),),
+          ],
+        ),
       ),
     );
     
