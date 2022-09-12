@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:newsapp/helpers/data.dart';
 import 'package:newsapp/helpers/news.dart';
 import 'package:newsapp/models/article_model.dart';
@@ -38,7 +39,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // ignore: deprecated_member_use
+  //ads
+  late BannerAd _bannerAd;
+  bool _isAdLoaded = false;
   List<CategoryModel> categories = <CategoryModel>[];
   List<ArticleModel> articles = <ArticleModel>[];
   bool _loading =true;
@@ -49,6 +52,7 @@ class _HomeState extends State<Home> {
     super.initState();
     categories = getCategories();
     getNews();
+    _initBannerAd();
   }
   getNews()async{
     News newsClass = News();
@@ -57,6 +61,22 @@ class _HomeState extends State<Home> {
     setState(() {
       _loading=false;
     });
+  }
+  _initBannerAd(){
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-1155296088390494/9602189825',
+      listener: BannerAdListener(
+       onAdLoaded: (ad) {
+        _isAdLoaded = true;
+  },
+  onAdFailedToLoad: (ad, error) {
+  
+  },
+),
+      request: const AdRequest(),
+    );
+    _bannerAd.load();
   }
   @override
   Widget build(BuildContext context) {
@@ -124,6 +144,12 @@ class _HomeState extends State<Home> {
           ],
         ) ,
         ),
+        bottomNavigationBar: _isAdLoaded? Container(
+          height: _bannerAd.size.height.toDouble(),
+          width: _bannerAd.size.width.toDouble(),
+          child: AdWidget(ad: _bannerAd),
+        ):
+        const SizedBox()
         
         
     );

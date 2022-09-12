@@ -16,7 +16,9 @@ class News{
     final uri =  Uri.https(authority, path, params);  
  
     //var response = await http.get(uri);
-    http.Response response = await http.get(Uri.parse('https://newsapi.org/v2/top-headlines?country=us&apiKey=57ee8c828be84296ba105eb0b4e61e48'));
+    //http.Response response = await http.get(Uri.parse('https://newsapi.org/v2/top-headlines?country=us&apiKey=57ee8c828be84296ba105eb0b4e61e48'));
+    http.Response response = await http.get(Uri.parse('https://newsapi.org/v2/everything?q=-bitcoin&apiKey=57ee8c828be84296ba105eb0b4e61e48'));
+
     print (response);
 
     var jsonData = jsonDecode(response.body);

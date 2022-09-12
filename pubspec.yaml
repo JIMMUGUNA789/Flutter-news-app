@@ -38,6 +38,7 @@ dependencies:
   cached_network_image: ^3.2.1
   get: ^4.6.5
   webview_flutter: ^3.0.4
+  google_mobile_ads: ^2.0.1
 
 dev_dependencies:
   flutter_test:
