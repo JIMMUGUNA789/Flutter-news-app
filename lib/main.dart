@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:newsapp/views/home.dart';
 import 'package:flutter/gestures.dart';
+  List<String> testDeviceIds = ['013334DB17E755D3E5E912D63B7072E1'];
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  RequestConfiguration configuration =
+       RequestConfiguration(testDeviceIds: testDeviceIds);
+  MobileAds.instance.updateRequestConfiguration(configuration);
   runApp(const MyApp());
 }
 
