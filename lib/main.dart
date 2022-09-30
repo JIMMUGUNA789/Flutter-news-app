@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:newsapp/views/home.dart';
 import 'package:flutter/gestures.dart';
+import 'package:newsapp/views/home2.dart';
   List<String> testDeviceIds = ['013334DB17E755D3E5E912D63B7072E1'];
 
 void main() {
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(       
         primarySwatch: Colors.blue,
       ),
-      home: const Home(),
+      home: const Home2(),
     );
   }
 }

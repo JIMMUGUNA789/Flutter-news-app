@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:newsapp/models/article_model.dart';
@@ -7,6 +8,8 @@ import 'package:newsapp/views/article_view.dart';
 import '../helpers/news.dart';
 import 'dart:math';
 import 'package:flutter/rendering.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 
 class CategoryNews extends StatefulWidget {
   final String category;
@@ -17,6 +20,10 @@ class CategoryNews extends StatefulWidget {
 }
 
 class _CategoryNewsState extends State<CategoryNews> {
+  late BannerAd _bannerAd;
+  bool _isAdLoaded = false;
+  late BannerAd _inlineAd;
+  bool _isInlineAdLoaded = false;
   List <ArticleModel> articles = <ArticleModel>[];
   bool _loading=true;
    @override
@@ -24,7 +31,45 @@ class _CategoryNewsState extends State<CategoryNews> {
     
     super.initState();
     getCategoryNews();
+    _initBannerAd();
+    _initInlineAdd();
   }
+    _initBannerAd(){
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      //adUnitId: 'ca-app-pub-1155296088390494/9602189825',
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      listener: BannerAdListener(
+       onAdLoaded: (ad) {
+        _isAdLoaded = true;
+  },
+  onAdFailedToLoad: (ad, error) {
+  
+  },
+),
+      request: const AdRequest(),
+    );
+    _bannerAd.load();
+  }
+  _initInlineAdd()async{
+  _inlineAd = BannerAd(
+    size: AdSize.mediumRectangle, 
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111', 
+    listener: BannerAdListener(
+      onAdLoaded: (ad) {
+        setState(() {
+          _isInlineAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: ((ad, error) {
+        ad.dispose();
+        print('inline ad failed to load ${error.message}');
+      })
+    ), 
+    request: AdRequest());
+    await _inlineAd.load();
+}
+
   getCategoryNews()async{
     CategoryNewsClass newsClass = CategoryNewsClass();
     await newsClass.getNews(widget.category);
@@ -41,8 +86,8 @@ class _CategoryNewsState extends State<CategoryNews> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget> [
-             Text('News '),
-             Text('Today', style: TextStyle(color: Colors.white),),
+             
+             Text('NewsToday', style: TextStyle(color: Colors.white),),
           ],
         ),
         actions:<Widget>[
@@ -80,10 +125,28 @@ class _CategoryNewsState extends State<CategoryNews> {
                             
                             
                             itemBuilder: (context, index){
+                               if(_isInlineAdLoaded && index==1){
+                          return Column(
+                            children: [
+                              Container(
+                                child: AdWidget(ad: _inlineAd),
+                                height: _inlineAd.size.height.toDouble(),
+                                width: _inlineAd.size.width.toDouble(),
+                              ),
+                              const SizedBox(height: 20,),
+                              BlogTile(imageUrl: articles[index].urlToImage,
+                         title: articles[index].title,
+                          desc:articles[index].description,
+                          url:articles[index].url),
+                            ],
+                          );
+                        }
+                        else{
                               return BlogTile(imageUrl: articles[index].urlToImage,
                                title: articles[index].title,
                                 desc:articles[index].description,
                                 url:articles[index].url);
+                            }
                             },
                           ),
                         ],
@@ -93,6 +156,16 @@ class _CategoryNewsState extends State<CategoryNews> {
                 ],
               ),
             ),
+            bottomNavigationBar: _isAdLoaded?
+         
+              Container(
+              height: _bannerAd.size.height.toDouble(),
+              width: _bannerAd.size.width.toDouble(),
+              child: AdWidget(ad: _bannerAd),
+            ):
+            
+               
+        const SizedBox()
       
     );
     
@@ -118,7 +191,7 @@ class BlogTile extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: Image.network(imageUrl)),
+              child: CachedNetworkImage(imageUrl:imageUrl)),
              const SizedBox(height: 8,),
             Text(title, style: const TextStyle(
             fontSize: 18,

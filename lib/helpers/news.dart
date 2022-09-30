@@ -26,7 +26,8 @@ class News{
     if(jsonData['status']=='ok'){
       jsonData["articles"].forEach((element){
         if(element['urlToImage']!=null&&element['description']!=null){
-          ArticleModel articleModel = ArticleModel(author:element['author'],
+          ArticleModel articleModel = ArticleModel(
+           author:element['author'],
            title: element['title'], 
            description:element['description'], 
            url:element['url'], 

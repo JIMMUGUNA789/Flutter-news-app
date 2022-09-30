@@ -23,8 +23,8 @@ class _ArticleViewState extends State<ArticleView> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget> [
-             Text('News '),
-             Text('Today', style: TextStyle(color: Colors.white),),
+         
+             Text('NewsToday', style: TextStyle(color: Colors.white),),
           ],
         ),
         actions:<Widget>[

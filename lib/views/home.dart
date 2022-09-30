@@ -12,6 +12,7 @@ import 'package:flutter/rendering.dart';
 import 'package:newsapp/views/article_view.dart';
 import 'package:newsapp/views/category_view.dart';
 
+
 bool _isInterstitialAdLoaded = false;
 late InterstitialAd _interstitialAd;
 
@@ -86,6 +87,7 @@ class _HomeState extends State<Home> {
     categories = getCategories();
     getNews();
     _initBannerAd();
+    _initInlineAdd();
     
   }
   getNews()async{
@@ -115,7 +117,7 @@ class _HomeState extends State<Home> {
   }
 _initInlineAdd()async{
   _inlineAd = BannerAd(
-    size: AdSize.banner, 
+    size: AdSize.mediumRectangle, 
     adUnitId: 'ca-app-pub-3940256099942544/6300978111', 
     listener: BannerAdListener(
       onAdLoaded: (ad) {
@@ -139,12 +141,13 @@ _initInlineAdd()async{
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget> [
-             Text('News '),
-             Text('Today', style: TextStyle(color: Colors.white),),
+             
+             Text('NewsToday', style: TextStyle(color: Colors.white),),
           ],
         ),
         elevation: 0.0,
-        centerTitle: true,
+        //centerTitle: true,
+        
       ),
       body:
       _loading ? Center( 
@@ -188,8 +191,9 @@ _initInlineAdd()async{
                       
                       
                       itemBuilder: (context, index){
-                        _initInlineAdd();
-                        if(_isInlineAdLoaded && index%5==0){
+                        
+                       
+                        if(_isInlineAdLoaded && index==1){
                           return Column(
                             children: [
                               Container(
@@ -252,8 +256,8 @@ class CategoryTile extends StatelessWidget {
             }
           Navigator.push(context, MaterialPageRoute(
           builder: (context)=>CategoryNews(category: categoryName.toString().toLowerCase())));
-          if(!_isInterstitialAdLoaded){
-                Navigator.push(context, MaterialPageRoute(
+          if(_isInterstitialAdLoaded==false){
+              Navigator.push(context, MaterialPageRoute(
           builder: (context)=>CategoryNews(category: categoryName.toString().toLowerCase())));
           }
       
@@ -299,13 +303,15 @@ class BlogTile extends StatelessWidget {
         _initAd();
             if(_isInterstitialAdLoaded){    
         _interstitialAd.show();
-            }
+            
         Navigator.push(context,MaterialPageRoute(
           builder: (context)=>ArticleView(blogUrl: url)));
+            }
           if(!_isInterstitialAdLoaded){
              Navigator.push(context,MaterialPageRoute(
           builder: (context)=>ArticleView(blogUrl: url)));
           }
+         
         
       },
       child: Container(
