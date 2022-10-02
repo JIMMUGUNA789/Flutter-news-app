@@ -1,74 +1,24 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:newsapp/models/article_model.dart';
-import 'package:newsapp/helpers/updated_data.dart';
-import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:newsapp/helpers/updated_data.dart';
+import 'package:newsapp/views/webview.dart';
+import 'package:newsapp/widgets/custom_appbar.dart';
+import 'package:newsapp/widgets/news_card.dart';
+import 'package:newsapp/widgets/sidebar.dart';
 
-
-
-// Try changing the scroll speed
-import 'dart:math';
-import 'package:flutter/rendering.dart';
-import 'package:newsapp/views/article_view.dart';
-
-
-
-
-
-
-class AdjustableScrollController extends ScrollController {
-  AdjustableScrollController([int extraScrollSpeed = 40]) {
-    super.addListener(() {
-      ScrollDirection scrollDirection = super.position.userScrollDirection;
-      if (scrollDirection != ScrollDirection.idle) {
-        double scrollEnd = super.offset +
-            (scrollDirection == ScrollDirection.reverse
-                ? extraScrollSpeed
-                : -extraScrollSpeed);
-        scrollEnd = min(super.position.maxScrollExtent,
-            max(super.position.minScrollExtent, scrollEnd));
-        jumpTo(scrollEnd);
-      }
-    });
-  }
-}
-
-
-class Home2 extends StatefulWidget {
-   const Home2({Key? key}) : super(key: key);
-  
- 
-  @override
-  State<Home2> createState() => _Home2State();
-}
-
-class _Home2State extends State<Home2> {
-  
-
-  
+class HomePage extends StatelessWidget {
+  HomePage({Key? key}) : super(key: key);
   NewsController newsController = Get.put(NewsController());
   TextEditingController searchController = TextEditingController();
-  
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget> [
-             
-             Text('NewsToday', style: TextStyle(color: Colors.white),),
-          ],
-        ),
-        elevation: 0.0,
-        //centerTitle: true,
-        actions:  [
+      drawer: sideDrawer(newsController),
+      appBar: customAppBar('NewsToday', context, actions: [
         IconButton(
           onPressed: () {
             newsController.country.value = '';
@@ -82,269 +32,228 @@ class _Home2State extends State<Home2> {
           },
           icon: const Icon(Icons.refresh),
         ),
-      ],
-        
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        
-        child:Column(
-          children: <Widget>[ 
-           
-            //blogs
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
+      ]),
+      body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: 18, vertical: 6),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //search bar
                     Flexible(
- child: Container(
-   padding: const EdgeInsets.symmetric(horizontal: 8),
-   margin: const EdgeInsets.symmetric(
-       horizontal: 18, vertical: 16),
-   decoration: BoxDecoration(
-       color: Colors.white,
-       borderRadius: BorderRadius.circular(8)),
-   child: Row(
-     mainAxisSize: MainAxisSize.max,
-     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-     children: [
-       Flexible(
-         fit: FlexFit.tight,
-         flex: 4,
-         child: Padding(
-           padding: const EdgeInsets.only(left: 16),
-           child: TextField(
-             controller: searchController,
-             textInputAction: TextInputAction.search,
-             decoration: const InputDecoration(
-                 border: InputBorder.none,
-                 hintText: "Search News"),
-             onChanged: (val) {
-               newsController.searchNews.value = val;
-               newsController.update();
-             },
-             onSubmitted: (value) async {
-               newsController.searchNews.value = value;
-               newsController.getAllNews(
-                   searchKey: newsController.searchNews.value);
-               searchController.clear();
-             },
-           ),
-         ),
-       ),
-       Flexible(
-         flex: 1,
-         fit: FlexFit.tight,
-         child: IconButton(
-             padding: EdgeInsets.zero,
-             color: Colors.blue,
-             onPressed: () async {
-               newsController.getAllNews(
-                   searchKey: newsController.searchNews.value);
-               searchController.clear();
-             },
-             icon: const Icon(Icons.search_sharp)),
-       ),
-     ],
-   ),
- ),
-),
-
-//Carousel to display breaking news
-GetBuilder<NewsController>(
-   init: NewsController(),
-   builder: (controller) {
-     return CarouselSlider(
-       options: CarouselOptions(
-           height: 200, autoPlay: true, enlargeCenterPage: true),
-       items: controller.breakingNews.map((instance) {
-         return controller.articleNotFound.value
-             ? const Center(
-                 child: Text("Not Found",
-                     style: TextStyle(fontSize: 30)))
-             : controller.breakingNews.isEmpty
-                 ? const Center(child: CircularProgressIndicator())
-                 : Builder(builder: (BuildContext context) {
-                     try {
-                       return Banner(
-                         location: BannerLocation.topStart,
-                         message: 'Top Headlines',
-                         child: InkWell(
-                           onTap: () => Get.to(() =>
-                               ArticleView(blogUrl: instance.url)),
-                           child: Stack(children: [
-                             ClipRRect(
-                               borderRadius:
-                                   BorderRadius.circular(10),
-                               child: Image.network(
-                                 instance.urlToImage ?? " ",
-                                 fit: BoxFit.fill,
-                                 height: double.infinity,
-                                 width: double.infinity,
-                                // if the image is null
-                                 errorBuilder:
-                                     (BuildContext context,
-                                         Object exception,
-                                         StackTrace? stackTrace) {
-                                   return Card(
-                                     shape: RoundedRectangleBorder(
-                                         borderRadius:
-                                             BorderRadius.circular(
-                                                 10)),
-                                     child: const SizedBox(
-                                       height: 200,
-                                       width: double.infinity,
-                                       child: Icon(Icons
-                                           .broken_image_outlined),
-                                     ),
-                                   );
-                                 },
-                               ),
-                             ),
-                             Positioned(
-                                 left: 0,
-                                 right: 0,
-                                 bottom: 0,
-                                 child: Container(
-                                   decoration: BoxDecoration(
-                                       borderRadius:
-                                           BorderRadius.circular(
-                                               10),
-                                       gradient: LinearGradient(
-                                           colors: [
-                                             Colors.black12
-                                                 .withOpacity(0),
-                                             Colors.black
-                                           ],
-                                           begin:
-                                               Alignment.topCenter,
-                                           end: Alignment
-                                               .bottomCenter)),
-                                   child: Container(
-                                       padding: const EdgeInsets
-                                               .symmetric(
-                                           horizontal: 5,
-                                           vertical: 10),
-                                       child: Container(
-                                           margin: const EdgeInsets
-                                                   .symmetric(
-                                               horizontal: 10),
-                                           child: Text(
-                                             instance.title,
-                                             style: const TextStyle(
-                                                 fontSize: 16,
-                                                 color:
-                                                     Colors.white,
-                                                 fontWeight:
-                                                     FontWeight
-                                                         .bold),
-                                           ))),
-                                 )),
-                           ]),
-                         ),
-                       );
-                     } catch (e) {
-                       if (kDebugMode) {
-                         print(e);
-                       }
-                       return Container();
-                     }
-                   });
-       }).toList(),
-     );
-   }),
-
-                    // ListView.builder(
-                      
-                    //   itemCount: articles.length,
-                    //   shrinkWrap: true,
-                    //   controller: AdjustableScrollController(),
-                      
-                      
-                    //   itemBuilder: (context, index){                    
-                       
-                                             
-                    //     return BlogTile(imageUrl: articles[index].urlToImage,
-                    //      title: articles[index].title,
-                    //       desc:articles[index].description,
-                    //       url:articles[index].url);
-                    //     }
-                    //   ,
-                    // ),
+                      fit: FlexFit.tight,
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: TextField(
+                          controller: searchController,
+                          textInputAction: TextInputAction.search,
+                          decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Search News"),
+                          onChanged: (val) {
+                            newsController.searchNews.value = val;
+                            newsController.update();
+                          },
+                          onSubmitted: (value) async {
+                            newsController.searchNews.value = value;
+                            newsController.getAllNews(
+                                searchKey: newsController.searchNews.value);
+                            searchController.clear();
+                          },
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: IconButton(
+                          padding: EdgeInsets.zero,
+                          color: Colors.blue,
+                          onPressed: () async {
+                            newsController.getAllNews(
+                                searchKey: newsController.searchNews.value);
+                            searchController.clear();
+                          },
+                          icon: const Icon(Icons.search_sharp)),
+                    ),
                   ],
                 ),
               ),
             ),
-          ],
-        ) ,
-        ),
-       
-            
-               
-        
-        
-        
-    );
-    
-  }
-}
-
-
-//body
-class BlogTile extends StatelessWidget {
-  final imageUrl, title, desc, content, posturl;
-  const BlogTile({Key? key, required this.imageUrl, required this.title, required this.desc, this.content, this.posturl}) : super(key: key);
- 
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        
-          //    Navigator.push(context,MaterialPageRoute(
-          // builder: (context)=>ArticleView(blogUrl: url)));
-          
-         
-        
-      },
-      child: Container(
-        margin:const EdgeInsets.only(bottom: 16,),
-        child: Column(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: Image.network(
-                imageUrl,
-                errorBuilder: (BuildContext context, Object exception,
-                    StackTrace? stackTrace) {
-                  return Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const SizedBox(
-                      height: 200,
-                      width: double.infinity,
-                      child: Icon(Icons.broken_image_outlined),
-                    ),
+            GetBuilder<NewsController>(
+                init: NewsController(),
+                builder: (controller) {
+                  return CarouselSlider(
+                    options: CarouselOptions(
+                        height: 200, autoPlay: true, enlargeCenterPage: true),
+                    items: controller.breakingNews.map((instance) {
+                      return controller.articleNotFound.value
+                          ? const Center(
+                              child: Text("Not Found",
+                                  style: TextStyle(fontSize: 30)))
+                          : controller.breakingNews.isEmpty
+                              ? const Center(child: CircularProgressIndicator())
+                              : Builder(builder: (BuildContext context) {
+                                  try {
+                                    return Banner(
+                                      location: BannerLocation.topStart,
+                                      message: 'Top Headlines',
+                                      child: InkWell(
+                                        onTap: () => Get.to(() =>
+                                            WebViewNews(newsUrl: instance.url)),
+                                        child: Stack(children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: Image.network(
+                                              instance.urlToImage ?? " ",
+                                              fit: BoxFit.fill,
+                                              height: double.infinity,
+                                              width: double.infinity,
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                                return Card(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: const SizedBox(
+                                                    height: 200,
+                                                    width: double.infinity,
+                                                    child: Icon(Icons
+                                                        .broken_image_outlined),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          Positioned(
+                                              left: 0,
+                                              right: 0,
+                                              bottom: 0,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    gradient: LinearGradient(
+                                                        colors: [
+                                                          Colors.black12
+                                                              .withOpacity(0),
+                                                          Colors.black
+                                                        ],
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter)),
+                                                child: Container(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 5,
+                                                        vertical: 10),
+                                                    child: Container(
+                                                        margin: const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 10),
+                                                        child: Text(
+                                                          instance.title,
+                                                          style: const TextStyle(
+                                                              fontSize:16,
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ))),
+                                              )),
+                                        ]),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    if (kDebugMode) {
+                                      print(e);
+                                    }
+                                    return Container();
+                                  }
+                                });
+                    }).toList(),
                   );
-                },
-              )),
-             const SizedBox(height: 8,),
-            Text(title, style: const TextStyle(
-            fontSize: 18,
-            color: Colors.black87,
-            fontWeight: FontWeight.w500,
-            ),),
-            const SizedBox(height: 8,),
-            Text(desc, style: const TextStyle(
-              color:Colors.black54,
-            ),),
+                }),
+            SizedBox(height: 10,),
+            const Divider(),
+            SizedBox(height: 10,),
+            newsController.cName.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 18),
+                    child: Obx(() {
+                      return Text(
+                        newsController.cName.value.toUpperCase(),
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      );
+                    }),
+                  )
+                : const SizedBox.shrink(),
+            SizedBox(height: 10,),
+            GetBuilder<NewsController>(
+                init: NewsController(),
+                builder: (controller) {
+                  return controller.articleNotFound.value
+                      ? const Center(
+                          child: Text('Nothing Found'),
+                        )
+                      : controller.allNews.isEmpty
+                          ? const Center(child: CircularProgressIndicator())
+                          : ListView.builder(
+                              controller: controller.scrollController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.allNews.length,
+                              itemBuilder: (context, index) {
+                                index == controller.allNews.length - 1 &&
+                                        controller.isLoading.isTrue
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : const SizedBox();
+                                return InkWell(
+                                  onTap: () => Get.to(() => WebViewNews(
+                                      newsUrl: controller.allNews[index].url)),
+                                  child: NewsCard(
+                                      imgUrl: controller
+                                              .allNews[index].urlToImage ??
+                                          '',
+                                      desc: controller
+                                              .allNews[index].description ??
+                                          '',
+                                      title: controller.allNews[index].title,
+                                      content:
+                                          controller.allNews[index].content ??
+                                              '',
+                                      postUrl: controller.allNews[index].url),
+                                );
+                              });
+                }),
           ],
         ),
       ),
     );
-    
   }
 }
-
