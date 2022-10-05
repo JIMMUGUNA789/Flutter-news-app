@@ -1,75 +1,112 @@
 
 import 'package:flutter/material.dart';
+import 'package:newsapp/views/article_view.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class NewsCard extends StatelessWidget {
-  final String imgUrl, title, desc, content, postUrl;
+bool _isInterstitialAdLoaded = false;
+late InterstitialAd _interstitialAd;
+void _initAd(){
+    InterstitialAd.load(
+      adUnitId: 'ca-app-pub-3940256099942544/1033173712', 
+      request: AdRequest(), 
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: onAdLoaded,
+         onAdFailedToLoad: (error){})
+      );
+  } 
+  void onAdLoaded(InterstitialAd ad){
+    _interstitialAd = ad;
+    _isInterstitialAdLoaded = true;
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        // todo: move to next screen
+        _interstitialAd.dispose();
+      },
+      onAdFailedToShowFullScreenContent: (ad, error) {
+        //todo: also move to next screen
+        _interstitialAd.dispose();
+      },
+    );
+  }
 
-  const NewsCard(
-      {Key? key,
-      required this.imgUrl,
-      required this.desc,
-      required this.title,
-      required this.content,
-      required this.postUrl});
+
+//body
+class BlogTile extends StatelessWidget {
+  final imageUrl, title, desc, content, postUrl;
+  const BlogTile({Key? key, required this.imageUrl, required this.title, required this.desc, this.content, this.postUrl}) : super(key: key);
+ 
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      margin: const EdgeInsets.fromLTRB(
-         6, 0, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10)),
-              child: Image.network(
-                imgUrl,
-                height: 200,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.fill,
-                // if the image is null
-                errorBuilder: (BuildContext context, Object exception,
-                    StackTrace? stackTrace) {
-                  return Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const SizedBox(
-                      height: 200,
-                      width: double.infinity,
-                      child: Icon(Icons.broken_image_outlined),
-                    ),
-                  );
-                },
-              )),
-          //vertical15,
-          Padding(
-            padding: const EdgeInsets.all(6),
-            child: Text(
-              title,
-              maxLines: 2,
-              style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500),
+    return GestureDetector(
+      onTap: (){
+        _initAd();
+            if(_isInterstitialAdLoaded){    
+        _interstitialAd.show();
+            
+        Navigator.push(context,MaterialPageRoute(
+          builder: (context)=>ArticleView(blogUrl: postUrl)));
+            }
+          if(!_isInterstitialAdLoaded){
+             Navigator.push(context,MaterialPageRoute(
+          builder: (context)=>ArticleView(blogUrl: postUrl)));
+          }
+         
+        
+      },
+      child: Container(
+        margin:const EdgeInsets.only(bottom: 16,),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 6.0, left: 6.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.network(imageUrl,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const SizedBox(
+                        height: 200,
+                        width: double.infinity,
+                        child: Icon(Icons.broken_image_outlined),
+                      ),
+                    );
+                  },)),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(6),
-            child: Text(
-              desc,
-              maxLines: 2,
-              style: const TextStyle(color: Colors.black54, fontSize: 14),
+             const SizedBox(height: 8,),
+            Padding(
+              padding: const EdgeInsets.only(top:6.0, left: 6.0, right: 6.0),
+              child: Text(title, style: const TextStyle(
+              fontSize: 18,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+              ),),
             ),
-          )
-        ],
+            const SizedBox(height: 8,),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6.0),
+              
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                child: Text(
+                  desc, 
+                  style: const TextStyle(
+                  color:Colors.black54,
+                  
+                ),
+                ),
+              ),
+            ),
+            const Divider(),
+          ],
+        ),
       ),
     );
+    
   }
 }
+

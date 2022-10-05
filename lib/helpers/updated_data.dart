@@ -7,6 +7,9 @@ import 'package:newsapp/models/article2model.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:newsapp/models/news_model.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+
 
 class NewsController extends GetxController{
   List<ArticleModelV2> allNews = <ArticleModelV2>[];
@@ -25,11 +28,12 @@ RxInt pageSize = 10.obs;
 String baseUrl = "https://newsapi.org/v2/top-headlines?"; 
 static const newsApiKey = '57ee8c828be84296ba105eb0b4e61e48';
 
+
 @override
 void onInit() {
  scrollController = ScrollController()..addListener(_scrollListener);
  getAllNews();
- getBreakingNews();
+ getBreakingNews(); 
  super.onInit();
 }
   _scrollListener() {
@@ -39,6 +43,8 @@ void onInit() {
       getAllNews();
     }
   }
+
+
 
 
 // function to retrieve a JSON response for all news from newsApi.org
@@ -129,9 +135,12 @@ getAllNews({channel = '', searchKey = '', reload = false}) async {
    pageNum.value = 2;
  }
  // ENDPOINT
- baseUrl = "https://newsapi.org/v2/top-headlines?pageSize=10&page=$pageNum&";
+ //baseUrl = "https://newsapi.org/v2/top-headlines?pageSize=10&page=$pageNum&";
+  baseUrl = "https://newsapi.org/v2/top-headlines?";
+
+
  // default country is set to USA
- baseUrl += country.isEmpty ? 'country=in&' : 'country=$country&';
+ baseUrl += country.isEmpty ? 'country=us&' : 'country=$country&';
  // default category is set to Business
  baseUrl += category.isEmpty ? 'category=business&' : 'category=$category&';
  baseUrl += 'apiKey=${newsApiKey}';
@@ -146,8 +155,8 @@ getAllNews({channel = '', searchKey = '', reload = false}) async {
  if (searchKey != '') {
    country.value = '';
    category.value = '';
-   baseUrl =
-       "https://newsapi.org/v2/everything?q=$searchKey&from=2022-07-01&sortBy=popularity&pageSize=10&apiKey=${newsApiKey}";
+   //baseUrl ="https://newsapi.org/v2/everything?q=$searchKey&sortBy=popularity&pageSize=10&apiKey=${newsApiKey}";
+   baseUrl ="https://newsapi.org/v2/everything?q=$searchKey&sortBy=popularity&apiKey=${newsApiKey}";
  }
  print(baseUrl);
  // calling the API function and passing the URL here
@@ -173,8 +182,8 @@ getBreakingNews({reload = false}) async {
  }
  // default language is set to English
  
- baseUrl =
-     "https://newsapi.org/v2/top-headlines?pageSize=10&page=$pageNum&languages=en&";
+ //baseUrl ="https://newsapi.org/v2/top-headlines?pageSize=10&page=$pageNum&languages=en&";
+ baseUrl ="https://newsapi.org/v2/top-headlines?languages=en&";
  // default country is set to US
  baseUrl += country.isEmpty ? 'country=us&' : 'country=$country&';
  //baseApi += category.isEmpty ? '' : 'category=$category&';
