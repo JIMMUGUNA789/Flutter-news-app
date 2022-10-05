@@ -12,6 +12,8 @@ import 'package:newsapp/widgets/sidebar.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 //intercept back button operations
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+//splash screen
+import 'package:splashscreen/splashscreen.dart';
 
 bool _isInterstitialAdLoaded = false;
 late InterstitialAd _interstitialAd;
@@ -39,7 +41,24 @@ void _initAd(){
     );
   }
 
+class NewsToday extends StatelessWidget {
+  const NewsToday({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return SplashScreen(
+      seconds: 5,
+      navigateAfterSeconds: new HomePage(),
+      // title: new Text('NewsToday', textScaleFactor: 2,),
+      image: new Image(image: AssetImage('assets/logo.png')) ,
+      loadingText: Text('loading...'),
+      photoSize: 100.0,
+      loaderColor: Colors.blue,
+    );
+    
+    
+  }
+}
 
 
 class HomePage extends StatefulWidget {
