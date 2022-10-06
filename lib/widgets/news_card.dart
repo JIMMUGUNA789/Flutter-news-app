@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/views/article_view.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:share_plus/share_plus.dart';
 
 bool _isInterstitialAdLoaded = false;
 late InterstitialAd _interstitialAd;
@@ -28,6 +29,7 @@ void _initAd(){
       },
     );
   }
+ 
 
 
 //body
@@ -38,27 +40,27 @@ class BlogTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        _initAd();
-            if(_isInterstitialAdLoaded){    
-        _interstitialAd.show();
-            
-        Navigator.push(context,MaterialPageRoute(
-          builder: (context)=>ArticleView(blogUrl: postUrl)));
-            }
-          if(!_isInterstitialAdLoaded){
-             Navigator.push(context,MaterialPageRoute(
-          builder: (context)=>ArticleView(blogUrl: postUrl)));
+    return Container(
+      margin:const EdgeInsets.only(bottom: 16,),
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+             onTap: (){
+      _initAd();
+          if(_isInterstitialAdLoaded){    
+      _interstitialAd.show();
+          
+      Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: postUrl)));
           }
-         
-        
-      },
-      child: Container(
-        margin:const EdgeInsets.only(bottom: 16,),
-        child: Column(
-          children: <Widget>[
-            Padding(
+        if(!_isInterstitialAdLoaded){
+           Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: postUrl)));
+        }
+       
+      
+    },
+            child: Padding(
               padding: const EdgeInsets.only(right: 6.0, left: 6.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(6),
@@ -77,17 +79,70 @@ class BlogTile extends StatelessWidget {
                     );
                   },)),
             ),
-             const SizedBox(height: 8,),
-            Padding(
-              padding: const EdgeInsets.only(top:6.0, left: 6.0, right: 6.0),
-              child: Text(title, style: const TextStyle(
-              fontSize: 18,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
-              ),),
-            ),
-            const SizedBox(height: 8,),
-            Padding(
+          ),
+           const SizedBox(height: 8,),
+          Row(
+            children: [
+              Container(
+                width:310,
+                child: GestureDetector(
+                   onTap: (){
+      _initAd();
+          if(_isInterstitialAdLoaded){    
+      _interstitialAd.show();
+          
+      Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: postUrl)));
+          }
+        if(!_isInterstitialAdLoaded){
+           Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: postUrl)));
+        }
+       
+      
+    },
+                  child: Padding(
+                    padding: const EdgeInsets.only(top:6.0, left: 6.0, right: 6.0),
+                    child: Text(title, style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                    ),),
+                  ),
+                ),
+              ),
+              Flexible(
+                        flex: 1,
+                        fit: FlexFit.tight,
+                        child: IconButton(
+                            padding: EdgeInsets.zero,
+                            color: Colors.blue,
+                            onPressed: () async {
+                              Share.share(postUrl);
+                              
+                            },
+                            icon: const Icon(Icons.share)),
+                      ),
+            ],
+          ),
+          const SizedBox(height: 8,),
+          GestureDetector(
+             onTap: (){
+      _initAd();
+          if(_isInterstitialAdLoaded){    
+      _interstitialAd.show();
+          
+      Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: postUrl)));
+          }
+        if(!_isInterstitialAdLoaded){
+           Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: postUrl)));
+        }
+       
+      
+    },
+            child: Padding(
               padding: const EdgeInsets.only(bottom: 6.0),
               
               child: Container(
@@ -101,9 +156,9 @@ class BlogTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Divider(),
-          ],
-        ),
+          ),
+          const Divider(),
+        ],
       ),
     );
     
