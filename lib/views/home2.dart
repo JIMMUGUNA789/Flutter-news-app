@@ -10,8 +10,7 @@ import 'package:newsapp/widgets/custom_appbar.dart';
 import 'package:newsapp/widgets/news_card.dart';
 import 'package:newsapp/widgets/sidebar.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-//intercept back button operations
-import 'package:back_button_interceptor/back_button_interceptor.dart';
+
 //splash screen
 import 'package:splashscreen/splashscreen.dart';
 
@@ -19,7 +18,8 @@ bool _isInterstitialAdLoaded = false;
 late InterstitialAd _interstitialAd;
 void _initAd(){
     InterstitialAd.load(
-      adUnitId: 'ca-app-pub-3940256099942544/1033173712', 
+     // adUnitId: 'ca-app-pub-3940256099942544/1033173712', 
+      adUnitId: 'ca-app-pub-1155296088390494/8176660572',
       request: AdRequest(), 
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: onAdLoaded,
@@ -82,26 +82,19 @@ void initState() {
     super.initState();    
     _initBannerAd();  
     _initInLineAd();
-    BackButtonInterceptor.add(myInterceptor);
     
   }
-@override
-void dispose(){
-  BackButtonInterceptor.remove(myInterceptor);
-  super.dispose();
-}
 
 
 
-  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    _initAd();
-    _interstitialAd.show();
-    return true;// return true if u want to stop back
-  }
+
+ 
 _initInLineAd()async{
   _inLineAd = BannerAd(
     size: AdSize.mediumRectangle, 
-    adUnitId: 'ca-app-pub-3940256099942544/6300978111', 
+    //adUnitId: 'ca-app-pub-3940256099942544/6300978111', 
+    adUnitId: 'ca-app-pub-1155296088390494/9602189825',
+
     listener: BannerAdListener(
       onAdLoaded: (ad) {
         setState(() {
@@ -121,8 +114,9 @@ _initInLineAd()async{
  _initBannerAd(){
     _bannerAd = BannerAd(
       size: AdSize.banner,
-      //adUnitId: 'ca-app-pub-1155296088390494/9602189825',
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      
+      adUnitId: 'ca-app-pub-1155296088390494/9602189825',
+      //adUnitId: 'ca-app-pub-3940256099942544/6300978111',
       listener: BannerAdListener(
        onAdLoaded: (ad) {
         _isAdLoaded = true;
@@ -240,6 +234,7 @@ _initInLineAd()async{
                                 : Builder(builder: (BuildContext context) {
                                     try {
                                       return Banner(
+                                        color: Colors.blue,
                                         location: BannerLocation.topStart,
                                         message: 'Top Headlines',
                                         child: InkWell(

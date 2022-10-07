@@ -7,6 +7,26 @@ var listOfCountry = [
   {"name": "New Zealand", "code": "nz"},
   {"name": "Australia", "code": "au"},
   {"name": "Canada", "code": "ca"},
+  {"name": "Germany", "code": "de"},
+  {"name": "France", "code": "fr"},
+  {"name": "China", "code": "cn"},
+  {"name": "Portugal", "code": "pt"},
+  {"name": "Italy", "code": "it"},
+  {"name": "Brazil", "code": "br"},
+  {"name": "Belgium", "code": "be"},
+  {"name": "Nigeria", "code": "ng"},
+  {"name": "Argentina", "code": "ar"},
+  {"name": "Greece", "code": "gr"},
+
+
+
+
+
+
+
+
+
+
 ];
 
 var listOfCategory = [
