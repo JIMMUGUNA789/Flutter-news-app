@@ -137,7 +137,7 @@ _initInLineAd()async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: sideDrawer(newsController),
+      drawer: sideDrawer(newsController, context),
       appBar: customAppBar('NewsToday', context, actions: [
         IconButton(
           onPressed: () {
@@ -240,8 +240,18 @@ _initInLineAd()async{
                                         child: InkWell(
                                           
                                           onTap: (() {
-                                             Navigator.push(context,MaterialPageRoute(
-            builder: (context)=>ArticleView(blogUrl: instance.url)));
+                                             _initAd();
+          if(_isInterstitialAdLoaded){    
+      _interstitialAd.show();
+          
+      Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: instance.url)));
+          }
+        if(!_isInterstitialAdLoaded){
+           Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>ArticleView(blogUrl: instance.url)));
+        }
+                                             
                                           }),
                                           child: Stack(children: [
                                             ClipRRect(
@@ -362,7 +372,7 @@ _initInLineAd()async{
                                           child: CircularProgressIndicator(),
                                         )
                                       : const SizedBox();
-                                      if(_isInlineAdLoaded && index==0){
+                                      if(_isInlineAdLoaded && index==2){
                           return Column(
                             children: [
                               Container(
@@ -418,8 +428,7 @@ _initInLineAd()async{
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),
               child: AdWidget(ad: _bannerAd),
-              // child: Text("test banner",
-              // style: TextStyle(color: Colors.black),),
+             
             ):
             
                

@@ -2,12 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:newsapp/helpers/updated_data.dart';
+import 'package:newsapp/utils/app_theme.dart';
 import 'package:newsapp/utils/utils.dart';
 import 'package:newsapp/widgets/drop_down.dart';
+import 'package:provider/provider.dart';
 
-Drawer sideDrawer(NewsController newsController) {
+import '../app_state_notifier.dart';
+
+Drawer sideDrawer(NewsController newsController, context) {
   return Drawer(
-    backgroundColor:Colors.white,
+    //backgroundColor:Colors.white,
     child: ListView(
       children: <Widget>[
         GetBuilder<NewsController>(
@@ -37,7 +41,7 @@ Drawer sideDrawer(NewsController newsController) {
                       ? Text(
                           "Country: ${controller.cName.value.toUpperCase()}",
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
+                              color: Colors.white, fontSize: 14),
                         )
                       : const SizedBox.shrink(),
                   SizedBox(height: 5.0),
@@ -45,15 +49,15 @@ Drawer sideDrawer(NewsController newsController) {
                       ? Text(
                           "Category: ${controller.category.value.capitalizeFirst}",
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
+                              color: Colors.white, fontSize: 14),
                         )
                       : const SizedBox.shrink(),
                   SizedBox(height: 5.0,),
                   controller.channel.isNotEmpty
                       ? Text(
-                          "Category: ${controller.channel.value.capitalizeFirst}",
+                          "Channel: ${controller.channel.value.capitalizeFirst}",
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
+                              color: Colors.white, fontSize: 14),
                         )
                       : const SizedBox.shrink(),
                 ],
@@ -74,6 +78,7 @@ Drawer sideDrawer(NewsController newsController) {
             for (int i = 0; i < listOfCountry.length; i++)
               drawerDropDown(
                 onCalled: () {
+                  
                   newsController.country.value = listOfCountry[i]['code']!;
                   newsController.cName.value =
                       listOfCountry[i]['name']!.toUpperCase();
@@ -81,6 +86,7 @@ Drawer sideDrawer(NewsController newsController) {
                   newsController.getBreakingNews();
                 },
                 name: listOfCountry[i]['name']!.toUpperCase(),
+                context: context,
               ),
           ],
         ),
@@ -99,7 +105,8 @@ Drawer sideDrawer(NewsController newsController) {
                     newsController.category.value = listOfCategory[i]['code']!;
                     newsController.getAllNews();
                   },
-                  name: listOfCategory[i]['name']!.toUpperCase())
+                  name: listOfCategory[i]['name']!.toUpperCase(),
+                  context: context,),
           ],
         ),
 
@@ -109,8 +116,10 @@ Drawer sideDrawer(NewsController newsController) {
           collapsedIconColor: Colors.blue,
           iconColor:Colors.blue,
           textColor: Colors.blue,
+          
           title: const Text("Select Channel"),
           children: [
+            
             for (int i = 0; i < listOfNewsChannel.length; i++)
               drawerDropDown(
                 onCalled: () {
@@ -122,19 +131,35 @@ Drawer sideDrawer(NewsController newsController) {
                   newsController.update();
                 },
                 name: listOfNewsChannel[i]['name']!.toUpperCase(),
+                context: context, 
               ),
           ],
         ),
         const Divider(),
         ListTile(
+          trailing: Switch(
+    value: Provider.of<AppStateNotifier>(context, listen: false).isDarkMode,
+    onChanged: (boolVal) {
+        Provider.of<AppStateNotifier>(context, listen: false).updateTheme(boolVal);
+        print('Shared Prefs isDarkMode value: ${Provider.of<AppStateNotifier>(context).isDarkMode}');
+    },
+),
+  
+title: Text(
+              "Dark Mode",
+              style: Theme.of(context).textTheme.headline1,
+            ),
+
+        ),
+        ListTile(
             trailing: const Icon(
               Icons.done_sharp,
               size: 28,
-              color: Colors.black,
+              color: Colors.blue,
             ),
-            title: const Text(
+            title: Text(
               "Done",
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: Theme.of(context).textTheme.headline1,
             ),
             onTap: () => Get.back()),
       ],

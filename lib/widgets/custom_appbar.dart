@@ -5,10 +5,11 @@ customAppBar(String title, BuildContext context,
     {bool? automaticallyImplyLeading, Widget? leading, List<Widget>? actions}) {
   TextTheme textTheme = Theme.of(context).textTheme;
   return AppBar(
-    iconTheme: const IconThemeData(color: Colors.white),
+    // iconTheme: const IconThemeData(color: Colors.white),
+    iconTheme: Theme.of(context).appBarTheme.iconTheme,
     automaticallyImplyLeading: automaticallyImplyLeading ?? true,
     leading: leading,
-    backgroundColor: Colors.blue,
+   // backgroundColor: Colors.blue,
     elevation: 3.0,
     centerTitle: true,
     toolbarHeight: 64,
@@ -20,10 +21,8 @@ customAppBar(String title, BuildContext context,
         ),
         Text(
           title,
-          style: textTheme.headline5!.copyWith(
-              fontSize: 22,
-              color: Colors.white,
-              fontWeight: FontWeight.w600),
+          
+          style: textTheme.headline5,
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
         ),
