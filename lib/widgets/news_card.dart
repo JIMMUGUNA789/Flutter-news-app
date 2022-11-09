@@ -45,7 +45,7 @@ class BlogTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AppStateNotifier>(context);
+    final provider = Provider.of<ThemeProvider>(context);
     
      var bookmark = {
       'description': desc,
@@ -130,11 +130,13 @@ class BlogTile extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             color: Colors.blue,
                             onPressed: () async {
-                              provider.toggleBookmark(bookmark);
+                            //  provider.toggleBookmark(bookmark);
                               
                             },
-                            icon: provider.isExist(bookmark)? const Icon(Icons.bookmark, color: Colors.blue,)
-                             : const Icon(Icons.bookmark_border)) 
+                            icon:const Icon(Icons.bookmark_border)
+                           // icon: provider.isExist(bookmark)? const Icon(Icons.bookmark, color: Colors.blue,)
+                           //  : const Icon(Icons.bookmark_border)
+                           ) 
                            
                       ),
               Flexible(

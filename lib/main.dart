@@ -8,81 +8,61 @@ import 'package:newsapp/views/home2.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 List<String> testDeviceIds = ['013334DB17E755D3E5E912D63B7072E1'];
 
-
-
-
-void main()async {
+Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  
-  
-  
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool? theme = prefs.getBool("isDarkTheme");
+  bool themevalue;
+  if(theme !=null ){
+    themevalue = theme;
+  }else{
+    themevalue = false;
+  }
   MobileAds.instance.initialize();
   RequestConfiguration configuration =
-       RequestConfiguration(testDeviceIds: testDeviceIds);
+      RequestConfiguration(testDeviceIds: testDeviceIds);
   MobileAds.instance.updateRequestConfiguration(configuration);
-  
-  runApp(ChangeNotifierProvider<AppStateNotifier>(
-      create: (context) => AppStateNotifier(),
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (BuildContext context) => ThemeProvider(isDarkMode:themevalue),
       child: MyApp(),
-    ),);
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
-  
-   MyApp({Key? key,}) : super(key: key);
+  MyApp({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-    bool isDarkTheme = false;
-
-  @override
-  void initState() {
-    getThemeMode();
-    super.initState();
-  }
-
-  Future<bool> getThemeMode() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isDarkTheme = await prefs.getBool('isDarkMode')!;
-    return isDarkTheme;
-
-  } 
   @override
   Widget build(BuildContext context) {
-
-  return Consumer<AppStateNotifier>(
-    builder: (context, AppState, child){
+    return Consumer<ThemeProvider>(builder: (context, themeProvider, child) {
+      return MaterialApp(
+        title: 'News Today',
+        debugShowCheckedModeBanner: false,
+        scrollBehavior: CustomScrollBehaviour(),
+        theme: themeProvider.getTheme,
+        home: const NewsToday(),
         
-        return MaterialApp(
-      title: 'News Today',
-      debugShowCheckedModeBanner: false,
-      scrollBehavior: CustomScrollBehaviour(),
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,    
-      
-      home:  const NewsToday(),
-    themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-    
-    
-    
-    
-     
-    );
+      );
     });
   }
 }
-class CustomScrollBehaviour extends MaterialScrollBehavior{
+
+class CustomScrollBehaviour extends MaterialScrollBehavior {
   @override
-  Set<PointerDeviceKind> get dragDevices =>{
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    PointerDeviceKind.unknown,
-  };
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.unknown,
+      };
 }

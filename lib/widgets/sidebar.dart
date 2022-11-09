@@ -137,15 +137,15 @@ Drawer sideDrawer(NewsController newsController, context) {
         ),
         const Divider(),
         ListTile(
-          trailing: Switch(
-    value: Provider.of<AppStateNotifier>(context, listen: false).isDarkMode,
-    onChanged: (boolVal) {
-        Provider.of<AppStateNotifier>(context, listen: false).updateTheme(boolVal);
-        print('Shared Prefs isDarkMode value: ${Provider.of<AppStateNotifier>(context).isDarkMode}');
-    },
-),
-  
-title: Text(
+          trailing: IconButton(
+            icon: Icon(Icons.brightness_4),
+            color: Colors.blue,
+            onPressed: () {
+              ThemeProvider themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+              themeProvider.swapTheme();
+            },
+          ),
+          title: Text(
               "Dark Mode",
               style: Theme.of(context).textTheme.headline1,
             ),
