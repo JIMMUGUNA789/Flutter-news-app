@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:newsapp/helpers/updated_data.dart';
-import 'package:newsapp/utils/app_theme.dart';
+
 import 'package:newsapp/utils/utils.dart';
+import 'package:newsapp/views/settings.dart';
 import 'package:newsapp/widgets/drop_down.dart';
 import 'package:provider/provider.dart';
 
@@ -37,29 +38,29 @@ Drawer sideDrawer(NewsController newsController, context) {
                       fontWeight: FontWeight.w600,
                     ),),
                   ),
-                  controller.cName.isNotEmpty
-                      ? Text(
-                          "Country: ${controller.cName.value.toUpperCase()}",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 14),
-                        )
-                      : const SizedBox.shrink(),
-                  SizedBox(height: 5.0),
-                  controller.category.isNotEmpty
-                      ? Text(
-                          "Category: ${controller.category.value.capitalizeFirst}",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 14),
-                        )
-                      : const SizedBox.shrink(),
-                  SizedBox(height: 5.0,),
-                  controller.channel.isNotEmpty
-                      ? Text(
-                          "Channel: ${controller.channel.value.capitalizeFirst}",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 14),
-                        )
-                      : const SizedBox.shrink(),
+                  // controller.cName.isNotEmpty
+                  //     ? Text(
+                  //         "Country: ${controller.cName.value.toUpperCase()}",
+                  //         style: const TextStyle(
+                  //             color: Colors.white, fontSize: 14),
+                  //       )
+                  //     : const SizedBox.shrink(),
+                  // SizedBox(height: 5.0),
+                  // controller.category.isNotEmpty
+                  //     ? Text(
+                  //         "Category: ${controller.category.value.capitalizeFirst}",
+                  //         style: const TextStyle(
+                  //             color: Colors.white, fontSize: 14),
+                  //       )
+                  //     : const SizedBox.shrink(),
+                  // SizedBox(height: 5.0,),
+                  // controller.channel.isNotEmpty
+                  //     ? Text(
+                  //         "Channel: ${controller.channel.value.capitalizeFirst}",
+                  //         style: const TextStyle(
+                  //             color: Colors.white, fontSize: 14),
+                  //       )
+                  //     : const SizedBox.shrink(),
                 ],
               ),
             );
@@ -87,6 +88,7 @@ Drawer sideDrawer(NewsController newsController, context) {
                 },
                 name: listOfCountry[i]['name']!.toUpperCase(),
                 context: context,
+                
               ),
           ],
         ),
@@ -136,22 +138,41 @@ Drawer sideDrawer(NewsController newsController, context) {
           ],
         ),
         const Divider(),
-        ListTile(
-          trailing: IconButton(
-            icon: Icon(Icons.brightness_4),
-            color: Colors.blue,
-            onPressed: () {
-              ThemeProvider themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-              themeProvider.swapTheme();
-            },
-          ),
-          title: Text(
-              "Dark Mode",
-              style: Theme.of(context).textTheme.headline1,
-            ),
+        // ListTile(
+        //   trailing: IconButton(
+        //     icon: Icon(Icons.brightness_4),
+        //     color: Colors.blue,
+        //     onPressed: () {
+        //       ThemeProvider themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+        //       themeProvider.swapTheme();
+        //     },
+        //   ),
+        //   title: Text(
+        //       "Dark Mode",
+        //       style: Theme.of(context).textTheme.headline1,
+        //     ),
 
-        ),
-        ListTile(
+        // ),
+        
+          GestureDetector(
+            child: ListTile(
+              trailing: const Icon(
+                Icons.settings,
+                size: 28,
+                color: Colors.blue,
+              ),
+              title: Text(
+                "Settings",
+                style: Theme.of(context).textTheme.headline1,
+              ),
+                       
+            ),
+            onTap:(){
+              Navigator.push(context,MaterialPageRoute(
+        builder: (context)=>Settings()));
+            } ,
+          ),
+          ListTile(
             trailing: const Icon(
               Icons.done_sharp,
               size: 28,

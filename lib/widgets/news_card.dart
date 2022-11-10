@@ -1,10 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:newsapp/app_state_notifier.dart';
-import 'package:newsapp/models/article2model.dart';
 import 'package:newsapp/views/article_view.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 bool _isInterstitialAdLoaded = false;
@@ -44,16 +41,8 @@ class BlogTile extends StatelessWidget {
  
 
   @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<ThemeProvider>(context);
-    
-     var bookmark = {
-      'description': desc,
-      'urlToImage': imageUrl,
-      'content':content,
-      'title':title,
-      'url':postUrl,
-    } ;
+  Widget build(BuildContext context) {    
+     
     return Container(
       margin:const EdgeInsets.only(bottom: 16,),
       child: Column(
@@ -123,22 +112,7 @@ class BlogTile extends StatelessWidget {
                   ),
                 ),
               ),
-                Flexible(
-                        flex: 1,
-                        fit: FlexFit.tight,
-                        child: IconButton(
-                            padding: EdgeInsets.zero,
-                            color: Colors.blue,
-                            onPressed: () async {
-                            //  provider.toggleBookmark(bookmark);
-                              
-                            },
-                            icon:const Icon(Icons.bookmark_border)
-                           // icon: provider.isExist(bookmark)? const Icon(Icons.bookmark, color: Colors.blue,)
-                           //  : const Icon(Icons.bookmark_border)
-                           ) 
-                           
-                      ),
+               
               Flexible(
                         flex: 1,
                         fit: FlexFit.tight,

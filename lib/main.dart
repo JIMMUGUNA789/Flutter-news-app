@@ -3,7 +3,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:newsapp/app_state_notifier.dart';
-import 'package:newsapp/utils/app_theme.dart';
+
 import 'package:newsapp/views/home2.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

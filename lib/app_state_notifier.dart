@@ -6,29 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class ThemeProvider extends ChangeNotifier {
-  //Bookmarks Provider
-  // List _bookMarks =<Map> [];
-  // List get bookMarks => _bookMarks;  
-  // void toggleBookmark (Map<String, dynamic> bookmark){
-  //   final isExist = _bookMarks.contains(bookmark);
-  //   if(isExist){
-  //     _bookMarks.remove(bookmark);
-  //   }
-  //   else{
-  //     _bookMarks.add(bookmark);
-  //   }
-  //   notifyListeners();
-  // }
-  // bool isExist(Map<String, dynamic> bookmark){
-  //   final isExist = _bookMarks.contains(bookmark);
-  //   return isExist;
-  // }
-  // void clearBookmark(){
-  //   _bookMarks = [];
-  //   notifyListeners();
-  // }
-
-
 //light theme
 ThemeData light = ThemeData(
     scaffoldBackgroundColor: Colors.white,
